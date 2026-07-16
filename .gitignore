@@ -1,0 +1,47 @@
+# ── Python ──────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+dist/
+build/
+*.egg
+.venv/
+venv/
+env/
+*.sqlite3
+
+# ── Environment ─────────────────────────────────────────────────────────
+.env
+.env.local
+.env.production
+.env.development
+
+# ── IDE ─────────────────────────────────────────────────────────────────
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# ── Backend ─────────────────────────────────────────────────────────────
+backend/.env
+backend/alembic/versions/*.pyc
+
+# ── Frontend ────────────────────────────────────────────────────────────
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+frontend/.env.local
+frontend/.env.production.local
+frontend/.env.development.local
+frontend/next-env.d.ts
+
+# ── Docker ──────────────────────────────────────────────────────────────
+docker-data/
+
+# ── Logs ────────────────────────────────────────────────────────────────
+*.log
+logs/
