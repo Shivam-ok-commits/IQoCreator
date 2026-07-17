@@ -1,1 +1,1 @@
-"""Pipeline module — processing pipelines and workflow orchestration."""
+"""Pipeline module — import, analysis, recommendation."""

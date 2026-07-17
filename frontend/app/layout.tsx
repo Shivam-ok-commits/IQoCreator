@@ -1,15 +1,30 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Barlow_Condensed, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-body",
+  display: "swap",
+});
+
+const barlowCondensed = Barlow_Condensed({
+  subsets: ["latin"],
+  weight: ["600", "700", "800", "900"],
+  variable: "--font-display",
+  display: "swap",
+});
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ["latin"],
+  variable: "--font-mono",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
-  title: "IQoCreator",
-  description: "IQoCreator — AI-powered research platform",
-  icons: {
-    icon: "/favicon.ico",
-  },
+  title: "IQoCreator — AI-Powered YouTube Research",
+  description:
+    "Intelligent research platform for YouTube creators. Transform your content strategy with data-driven recommendations.",
 };
 
 export default function RootLayout({
@@ -18,8 +33,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className={inter.className}>{children}</body>
+    <html lang="en" className="dark">
+      <body
+        className={`${inter.variable} ${barlowCondensed.variable} ${jetbrainsMono.variable} font-body antialiased`}
+      >
+        {children}
+      </body>
     </html>
   );
 }

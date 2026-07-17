@@ -38,6 +38,8 @@ class CreatorProfile(TimestampMixin, SoftDeleteMixin, Base):
     platform_creator_id: Mapped[str] = mapped_column(String(128), nullable=False)
     subscriber_count: Mapped[int | None] = mapped_column(BigInteger, nullable=True)
     total_views: Mapped[int | None] = mapped_column(BigInteger, nullable=True)
+    country: Mapped[str | None] = mapped_column(String(4), nullable=True)
+    banner_url: Mapped[str | None] = mapped_column(String(1024), nullable=True)
     joined_platform_at: Mapped[datetime | None] = mapped_column(
         DateTime(timezone=True), nullable=True
     )

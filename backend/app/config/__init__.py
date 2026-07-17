@@ -67,6 +67,9 @@ class Settings(BaseSettings):
         default_factory=lambda: Path(__file__).resolve().parent.parent.parent
     )
 
+    # ── Secrets ──────────────────────────────────────────────────────────
+    secret_key: str = Field(alias="SECRET_KEY")
+
     # ── OAuth ────────────────────────────────────────────────────────────
     google_client_id: str = Field(alias="GOOGLE_CLIENT_ID")
     google_client_secret: str = Field(alias="GOOGLE_CLIENT_SECRET")
