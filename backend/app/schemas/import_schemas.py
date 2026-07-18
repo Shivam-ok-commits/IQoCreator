@@ -1,8 +1,27 @@
 from __future__ import annotations
 
 from datetime import datetime
+from uuid import UUID
 
 from pydantic import BaseModel, Field
+
+
+class VideoImportRequest(BaseModel):
+    creator_profile_id: UUID
+    connected_account_id: UUID
+
+
+class VideoImportResponse(BaseModel):
+    status: str
+    inserted: int = 0
+    updated: int = 0
+    processed: int = 0
+    duration_ms: int = 0
+    run_id: UUID
+
+
+class ErrorResponse(BaseModel):
+    detail: str
 
 
 class ChannelImportResponse(BaseModel):

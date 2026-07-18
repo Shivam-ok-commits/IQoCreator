@@ -213,8 +213,13 @@ class AuthService:
             description = snippet.get("description", description)
             thumbnails = snippet.get("thumbnails", {})
             if thumbnails:
-                thumb = thumbnails.get("default", thumbnails.get("high", {}))
-                thumbnail_url = thumb.get("url")
+                for key in ("maxres", "standard", "high", "medium", "default"):
+                    entry = thumbnails.get(key)
+                    if entry and isinstance(entry, dict):
+                        url = entry.get("url")
+                        if url:
+                            thumbnail_url = url
+                            break
             try:
                 subscriber_count = int(stats.get("subscriberCount", 0))
             except (ValueError, TypeError):

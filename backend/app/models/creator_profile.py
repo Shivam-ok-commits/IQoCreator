@@ -72,6 +72,10 @@ class CreatorProfile(TimestampMixin, SoftDeleteMixin, Base):
         "Experiment", back_populates="creator_profile",
         cascade="all, delete-orphan",
     )
+    metric_snapshots: Mapped[list["MetricSnapshot"]] = relationship(
+        "MetricSnapshot", back_populates="creator_profile",
+        cascade="all, delete-orphan",
+    )
 
     __table_args__ = (
         Index(

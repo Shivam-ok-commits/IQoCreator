@@ -50,6 +50,13 @@ from app.models import (  # noqa: F401
     RecommendationFeedback,
     Experiment,
     ExperimentResult,
+    MetricSnapshot,
+    MetricFeatureVector,
+    Finding,
+    PipelineEvidence,
+    PipelineClaim,
+    PipelineRecommendation,
+    PipelineExperiment,
 )
 
 # Target metadata for autogenerate

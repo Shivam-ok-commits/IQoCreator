@@ -5,6 +5,7 @@ from fastapi.responses import RedirectResponse
 from sqlalchemy import desc, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.config import settings
 from app.database.session import get_db
 from app.models import ChannelMetrics, ConnectedAccount, CreatorProfile, User
 from app.services.auth import AuthService
@@ -40,27 +41,27 @@ async def callback(
         raise HTTPException(status_code=400, detail=f"OAuth error: {error}")
 
     if not auth.verify_state(request):
-        bad = RedirectResponse(url="http://localhost:3000/?error=invalid_state", status_code=302)
+        bad = RedirectResponse(url=f"{settings.frontend_url}/?error=invalid_state", status_code=302)
         auth.clear_state_cookie(bad)
         return bad
 
     code = request.query_params.get("code")
     if not code:
-        bad = RedirectResponse(url="http://localhost:3000/?error=missing_code", status_code=302)
+        bad = RedirectResponse(url=f"{settings.frontend_url}/?error=missing_code", status_code=302)
         auth.clear_state_cookie(bad)
         return bad
 
     tokens = await auth.exchange_code(code)
     access_token = tokens.get("access_token")
     if not access_token:
-        bad = RedirectResponse(url="http://localhost:3000/?error=no_token", status_code=302)
+        bad = RedirectResponse(url=f"{settings.frontend_url}/?error=no_token", status_code=302)
         auth.clear_state_cookie(bad)
         return bad
 
     userinfo = await auth.get_userinfo(access_token)
     google_sub = userinfo.get("sub")
     if not google_sub:
-        bad = RedirectResponse(url="http://localhost:3000/?error=no_subject", status_code=302)
+        bad = RedirectResponse(url=f"{settings.frontend_url}/?error=no_subject", status_code=302)
         auth.clear_state_cookie(bad)
         return bad
 
@@ -75,7 +76,7 @@ async def callback(
     await auth.upsert_creator_profile(db, user.id, channel, google_sub)
 
     sess = get_session_service()
-    redirect = RedirectResponse(url="http://localhost:3000/connected", status_code=302)
+    redirect = RedirectResponse(url=f"{settings.frontend_url}/connected", status_code=302)
     sess.create_cookie(redirect, str(user.id))
     auth.clear_state_cookie(redirect)
     return redirect

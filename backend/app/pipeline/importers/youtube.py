@@ -124,10 +124,13 @@ class YouTubeImporter(BaseImporter):
             profile.description = description
         thumbnails = snippet.get("thumbnails", {})
         if thumbnails:
-            thumb = thumbnails.get("default", thumbnails.get("high", {}))
-            thumbnail_url = thumb.get("url")
-            if thumbnail_url:
-                profile.thumbnail_url = thumbnail_url
+            for key in ("maxres", "standard", "high", "medium", "default"):
+                entry = thumbnails.get(key)
+                if entry and isinstance(entry, dict):
+                    url = entry.get("url")
+                    if url:
+                        profile.thumbnail_url = url
+                        break
         subscriber_count = self._safe_int(stats.get("subscriberCount"))
         if subscriber_count is not None:
             profile.subscriber_count = subscriber_count

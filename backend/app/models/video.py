@@ -35,6 +35,8 @@ class Video(TimestampMixin, SoftDeleteMixin, Base):
     duration_seconds: Mapped[int | None] = mapped_column(Integer, nullable=True)
     url: Mapped[str | None] = mapped_column(String(1024), nullable=True)
     language: Mapped[str | None] = mapped_column(String(16), nullable=True)
+    privacy_status: Mapped[str | None] = mapped_column(String(16), nullable=True)
+    category_id: Mapped[str | None] = mapped_column(String(8), nullable=True)
     tags: Mapped[dict | None] = mapped_column(JSONB, nullable=True)
     transcript: Mapped[str | None] = mapped_column(Text, nullable=True)
 

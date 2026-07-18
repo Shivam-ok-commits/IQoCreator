@@ -1,3 +1,5 @@
-from app.dependencies.import_service import get_import_service
+from app.dependencies.import_coordinator import get_import_coordinator
 
-__all__ = ["get_import_service"]
+__all__ = [
+    "get_import_coordinator",
+]

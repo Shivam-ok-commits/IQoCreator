@@ -1,8 +1,9 @@
-from app.importers.base import BaseImporter, ChannelImportMetadata, ImportError, ImportResult
+from app.importers.base import ImportContext, ImportState
+from app.importers.youtube_types import PlaylistPageResult, YouTubeVideoData
 
 __all__ = [
-    "BaseImporter",
-    "ChannelImportMetadata",
-    "ImportError",
-    "ImportResult",
+    "ImportContext",
+    "ImportState",
+    "PlaylistPageResult",
+    "YouTubeVideoData",
 ]

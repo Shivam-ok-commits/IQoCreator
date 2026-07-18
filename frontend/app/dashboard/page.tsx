@@ -1,11 +1,104 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import Link from "next/link";
 import { useAuth } from "@/hooks/useAuth";
 import { CreatorThemeProvider } from "@/components/theme/CreatorThemeProvider";
 import { useCreatorTheme } from "@/hooks/useCreatorTheme";
 import { CreatorHero } from "@/components/creator/CreatorHero";
 import { api, type ImportStatus, type ImportResult } from "@/services/api";
+
+interface DashboardCardData {
+  title: string;
+  description: string;
+  href: string;
+  delay: number;
+  icon: React.ReactNode;
+  comingSoon?: boolean;
+}
+
+const CARDS: DashboardCardData[] = [
+  {
+    title: "Growth Consultant",
+    description: "Personalized growth score, bottlenecks, and recommended actions.",
+    href: "/dashboard/analytics",
+    delay: 0,
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <line x1="18" y1="20" x2="18" y2="10" />
+        <line x1="12" y1="20" x2="12" y2="4" />
+        <line x1="6" y1="20" x2="6" y2="14" />
+      </svg>
+    ),
+  },
+  {
+    title: "Content",
+    description: "Browse your imported videos and their metadata.",
+    href: "/dashboard/content",
+    delay: 80,
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="2" y="4" width="20" height="16" rx="2" />
+        <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+      </svg>
+    ),
+  },
+  {
+    title: "Research",
+    description: "Discover trending topics and optimize your strategy.",
+    href: "/dashboard/research",
+    delay: 160,
+    comingSoon: true,
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="11" cy="11" r="8" />
+        <path d="m21 21-4.3-4.3" />
+      </svg>
+    ),
+  },
+  {
+    title: "Competitors",
+    description: "Track similar creators and compare performance.",
+    href: "/dashboard/competitors",
+    delay: 240,
+    comingSoon: true,
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+        <circle cx="9" cy="7" r="4" />
+        <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+        <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+      </svg>
+    ),
+  },
+  {
+    title: "Audience",
+    description: "Understand your viewer demographics and behavior.",
+    href: "/dashboard/audience",
+    delay: 320,
+    comingSoon: true,
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+        <circle cx="9" cy="7" r="4" />
+        <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+        <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+      </svg>
+    ),
+  },
+  {
+    title: "Settings",
+    description: "Manage your account and connected services.",
+    href: "/dashboard/settings",
+    delay: 400,
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="12" cy="12" r="3" />
+        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+      </svg>
+    ),
+  },
+];
 
 function DashboardContent() {
   const { user, logout } = useAuth();
@@ -48,7 +141,6 @@ function DashboardContent() {
   if (!user) return null;
 
   const profile = user.creator_profile;
-  const avatarUrl = profile?.thumbnail_url || user.user.avatar_url;
   const hasImported = importStatus?.imported ?? false;
   const lastRun = importStatus?.runs?.[0] ?? null;
 
@@ -187,36 +279,17 @@ function DashboardContent() {
         </div>
 
         <div className="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-          <DashboardCard
-            title="Analytics"
-            description="Your channel performance at a glance."
-            delay={0}
-          />
-          <DashboardCard
-            title="Content"
-            description="Manage and optimize your videos."
-            delay={80}
-          />
-          <DashboardCard
-            title="Research"
-            description="Discover trending topics and keywords."
-            delay={160}
-          />
-          <DashboardCard
-            title="Competitors"
-            description="Track similar creators in your niche."
-            delay={240}
-          />
-          <DashboardCard
-            title="Audience"
-            description="Understand your viewer demographics."
-            delay={320}
-          />
-          <DashboardCard
-            title="Settings"
-            description="Configure your account and preferences."
-            delay={400}
-          />
+          {CARDS.map((card) => (
+            <Link key={card.title} href={card.href} className="block">
+              <DashboardCard
+                title={card.title}
+                description={card.description}
+                delay={card.delay}
+                icon={card.icon}
+                comingSoon={card.comingSoon}
+              />
+            </Link>
+          ))}
         </div>
 
         <div className="mt-8 flex justify-center pb-12">
@@ -249,19 +322,22 @@ interface DashboardCardProps {
   title: string;
   description: string;
   delay: number;
+  icon: React.ReactNode;
+  comingSoon?: boolean;
 }
 
-function DashboardCard({ title, description, delay }: DashboardCardProps) {
+function DashboardCard({ title, description, delay, icon, comingSoon }: DashboardCardProps) {
   const { theme } = useCreatorTheme();
 
   return (
     <div
-      className="rounded-2xl p-6"
+      className="rounded-2xl p-6 relative cursor-pointer select-none"
       style={{
         background: theme.surface,
         border: `1px solid ${theme.border}`,
         animation: `fade-up 0.4s ease-out ${delay}ms forwards`,
         opacity: 0,
+        transition: "border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease",
       }}
       onMouseEnter={(e) => {
         e.currentTarget.style.borderColor = `${theme.primary}30`;
@@ -274,8 +350,30 @@ function DashboardCard({ title, description, delay }: DashboardCardProps) {
         e.currentTarget.style.transform = "scale(1)";
       }}
     >
+      {comingSoon && (
+        <span
+          className="absolute top-3 right-3 px-2 py-0.5 rounded-full text-[10px] font-medium uppercase tracking-wider"
+          style={{
+            background: `${theme.primary}15`,
+            color: theme.primary,
+            border: `1px solid ${theme.primary}20`,
+          }}
+        >
+          V2
+        </span>
+      )}
+      <div
+        className="w-10 h-10 rounded-xl flex items-center justify-center mb-3"
+        style={{
+          background: `${theme.primary}10`,
+          color: theme.primary,
+          border: `1px solid ${theme.primary}15`,
+        }}
+      >
+        {icon}
+      </div>
       <h3
-        className="font-display text-heading-4 mb-2"
+        className="font-display text-heading-4 mb-1"
         style={{ color: theme.textPrimary }}
       >
         {title}
@@ -284,7 +382,7 @@ function DashboardCard({ title, description, delay }: DashboardCardProps) {
         className="text-caption"
         style={{ color: theme.textSecondary }}
       >
-        {description}
+        {comingSoon ? `${description} Coming in V2.` : description}
       </p>
     </div>
   );

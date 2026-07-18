@@ -1,45 +1,22 @@
 from __future__ import annotations
 
-from abc import ABC, abstractmethod
-from dataclasses import dataclass, field
+from dataclasses import dataclass
+from datetime import datetime
 from uuid import UUID
 
-from sqlalchemy.ext.asyncio import AsyncSession
+
+@dataclass(frozen=True)
+class ImportContext:
+    import_run_id: UUID
+    creator_profile_id: UUID
+    connected_account_id: UUID
+    provider: str
+    started_at: datetime
 
 
 @dataclass
-class ImportError:
-    item: str
-    message: str
-
-
-@dataclass
-class ChannelImportMetadata:
-    channel_name: str | None = None
-    handle: str | None = None
-    subscriber_count: int | None = None
-    video_count: int | None = None
-    view_count: int | None = None
-
-
-@dataclass
-class ImportResult:
-    success: bool
-    imported: int = 0
-    updated: int = 0
-    failed: int = 0
-    duration_ms: int = 0
-    errors: list[ImportError] = field(default_factory=list)
-    metadata: ChannelImportMetadata | None = None
-
-
-class BaseImporter(ABC):
-    _db: AsyncSession
-
-    @abstractmethod
-    async def run(
-        self,
-        creator_profile_id: UUID,
-        access_token: str,
-    ) -> ImportResult:
-        ...
+class ImportState:
+    processed: int = 0
+    total: int = 0
+    next_page_token: str | None = None
+    retries: int = 0

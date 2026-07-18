@@ -57,7 +57,7 @@ class Settings(BaseSettings):
 
     # ── CORS ─────────────────────────────────────────────────────────────
     cors_origins: list[str] = Field(
-        default=["http://localhost:3000"],
+        default=["http://localhost:3000", "http://localhost:3001"],
         alias="CORS_ORIGINS",
     )
     cors_allow_credentials: bool = Field(default=True, alias="CORS_ALLOW_CREDENTIALS")
@@ -70,6 +70,12 @@ class Settings(BaseSettings):
     # ── Secrets ──────────────────────────────────────────────────────────
     secret_key: str = Field(alias="SECRET_KEY")
 
+    # ── Frontend URL ─────────────────────────────────────────────────────
+    frontend_url: str = Field(
+        default="http://localhost:3000",
+        alias="FRONTEND_URL",
+    )
+
     # ── OAuth ────────────────────────────────────────────────────────────
     google_client_id: str = Field(alias="GOOGLE_CLIENT_ID")
     google_client_secret: str = Field(alias="GOOGLE_CLIENT_SECRET")
@@ -81,6 +87,13 @@ class Settings(BaseSettings):
     # ── API Keys ─────────────────────────────────────────────────────────
     # YouTube Data API key (loaded from environment)
     youtube_api_key: str | None = Field(default=None, alias="YOUTUBE_API_KEY")
+
+    # ── YouTube API ──────────────────────────────────────────────────────
+    youtube_api_timeout: float = Field(
+        default=15.0,
+        alias="YOUTUBE_API_TIMEOUT",
+        description="Timeout in seconds for YouTube API HTTP requests",
+    )
 
     @property
     def is_development(self) -> bool:

@@ -7,7 +7,7 @@ from datetime import datetime
 from enum import Enum as PyEnum
 
 from sqlalchemy import DateTime, ForeignKey, Integer, String, Text
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database import Base, TimestampMixin, uuid_pk
@@ -18,8 +18,10 @@ class ImportRunStatus(str, PyEnum):
 
     PENDING = "pending"
     RUNNING = "running"
-    COMPLETED = "completed"
+    PAUSED = "paused"
     FAILED = "failed"
+    COMPLETED = "completed"
+    CANCELLED = "cancelled"
 
 
 class ImportRun(TimestampMixin, Base):
@@ -49,6 +51,12 @@ class ImportRun(TimestampMixin, Base):
     completed_at: Mapped[datetime | None] = mapped_column(
         DateTime(timezone=True), nullable=True
     )
+    last_page_token: Mapped[str | None] = mapped_column(
+        String(512), nullable=True
+    )
+    total_count: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    processed_count: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    checkpoint_data: Mapped[dict | None] = mapped_column(JSONB, nullable=True)
 
     # ── Relationships ────────────────────────────────────────────────────
     creator_profile: Mapped["CreatorProfile"] = relationship(

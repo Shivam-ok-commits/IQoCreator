@@ -342,3 +342,47 @@ A sprint is complete **ONLY** if all of the following are true:
 - System runs in production-like environment
 - Monitoring dashboard operational
 - Beta users can authenticate and onboard
+
+---
+
+# Beyond Sprints — Architectural Freeze & Next Milestones
+
+The core architecture (Pipeline → Domain Models → Presentation) is declared frozen as of the Growth Review implementation.
+
+## Freeze Rules
+
+No new core abstractions may be introduced unless they satisfy **at least one** of:
+1. Simplify an existing abstraction.
+2. Enable a capability that cannot be built with the current model.
+3. Reduce coupling between layers.
+
+Everything else should be implemented within the existing architecture.
+
+## Next Milestones
+
+### Milestone 1: Longitudinal Coaching
+
+**What to build:**
+- `GrowthMemory` domain object (recurring strengths/weaknesses, successful/failed experiments, stable/abandoned patterns, strategy summary, confidence over time)
+- Growth Review history endpoint and timeline UI
+- Experiment timeline (visual history of completed experiments)
+
+**Success criterion:** A creator can understand six months of progress in under two minutes.
+
+### Milestone 2: Prediction Validation
+
+**What to build:**
+- `Prediction` model (metric, baseline, expected_range, deadline, confidence, actual_value, outcome)
+- Accuracy tracking per recommendation type
+- Confidence calibration ("we've been right X% of the time on this type of prediction")
+
+**Success criterion:** The system can say not only what it predicts, but how often similar predictions have been correct.
+
+### Milestone 3: AI Coach
+
+**What to build:**
+- Natural language interface grounded entirely in `GrowthReview`, `GrowthMemory`, and `Experiment` data
+- Every answer references evidence already known about the creator (no generic YouTube advice)
+- Answers cite specific Growth Reviews, experiments, and mission outcomes as sources
+
+**Success criterion:** Every answer references evidence already known about the creator.
